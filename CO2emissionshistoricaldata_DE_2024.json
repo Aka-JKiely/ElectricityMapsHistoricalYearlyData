@@ -1,0 +1,537 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Linode Regions CO2 Dashboard ",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 37,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb"
+          },
+          "query": "from(bucket: \"de-fra-2\")\n  |> range(start: 2024-01-01T00:00:00Z, stop: 2024-12-31T23:59:59Z)\n  |> filter(fn: (r) => r._measurement == \"co2_intensity\")\n  |> filter(fn: (r) => r._field == \"co2_intensity\")\n  |> filter(fn: (r) => r.Country == \"Germany\")\n  |> filter(fn: (r) => r[\"Data Source\"] == \"entsoe.eu\")\n  |> filter(fn: (r) => r._value > 1 and r._value < 10000)\n  |> aggregateWindow(every: 5m, fn: mean, createEmpty: false)  // Aggregate by 5-minute intervals\n  |> yield(name: \"mean\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Frankfurt (de-fra-2) CO2 Emissions (gCO2e per kWh)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            }
+          },
+          "displayName": "gCO2eq/kWh",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 5,
+        "x": 0,
+        "y": 16
+      },
+      "id": 32,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb"
+          },
+          "query": "from(bucket: \"de-fra-2\")\n  |> range(start: 2024-01-01T00:00:00Z, stop: 2024-12-31T23:59:59Z)\n  |> filter(fn: (r) => r._measurement == \"co2_intensity\")\n  |> filter(fn: (r) => r._field == \"co2_intensity\")\n  |> filter(fn: (r) => r.Country == \"Germany\")\n  |> filter(fn: (r) => r[\"Data Source\"] == \"entsoe.eu\")\n  |> filter(fn: (r) => r._value > 1 and r._value < 10000)\n  |> aggregateWindow(every: 5m, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Frankfurt (de-fra-2) CO2ge/kWh distribution ",
+      "type": "histogram"
+    },
+    {
+      "datasource": {
+        "type": "influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "_value"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Average CO2 Emissions (365 days)"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 5,
+        "y": 16
+      },
+      "id": 28,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.5.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb"
+          },
+          "query": "\nfrom(bucket: \"de-fra-2\")\n  |> range(start: 2024-01-01T00:00:00Z, stop: 2024-12-31T23:59:59Z)\n  |> filter(fn: (r) => r._measurement == \"co2_intensity\")\n  |> filter(fn: (r) => r._field == \"co2_intensity\")\n  |> filter(fn: (r) => r.Country == \"Germany\")\n  |> filter(fn: (r) => r[\"Data Source\"] == \"entsoe.eu\")\n  |> filter(fn: (r) => r._value > 1 and r._value < 10000)\n  |> group()  // Group all data together (remove any subgrouping)\n  |> stddev(column: \"_value\")  // Calculate the standard deviation for the entire dataset\n  |> map(fn: (r) => ({\n      r with three_sigma: r._value * 3.0  // Multiply standard deviation by 3 to get 3-sigma\n  }))\n  |> keep(columns: [\"three_sigma\"])  // Only keep the 3-sigma value\n  |> yield(name: \"three_sigma\")\n\nfrom(bucket: \"de-fra-2\")\n  |> range(start: 2024-01-01T00:00:00Z, stop: 2024-12-31T23:59:59Z)\n  |> filter(fn: (r) => r._measurement == \"co2_intensity\")\n  |> filter(fn: (r) => r._field == \"co2_intensity\")\n  |> filter(fn: (r) => r.Country == \"Germany\")\n  |> filter(fn: (r) => r[\"Data Source\"] == \"entsoe.eu\")\n  |> filter(fn: (r) => r._value > 1 and r._value < 10000)\n  |> aggregateWindow(every: 1d, fn: mean, createEmpty: false)  // Aggregate data by day\n  |> group()\n  |> mean(column: \"_value\")  // Calculate the mean CO2 intensity for the last 365 days\n  |> yield(name: \"365_day_average\")\n\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Frankfurt (de-fra-2)  Average and 3sigma CO2 Emissions (365 days)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 26
+      },
+      "id": 38,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb"
+          },
+          "query": "from(bucket: \"de-fra-2\")\n  |> range(start: 2024-01-01T00:00:00Z, stop: 2024-12-31T23:59:59Z)\n  |> filter(fn: (r) => r._measurement == \"co2_intensity\")\n  |> filter(fn: (r) => r._field == \"Renewable Percentage\")\n  |> filter(fn: (r) => r.Country == \"Germany\")\n  |> filter(fn: (r) => r[\"Data Source\"] == \"entsoe.eu\")\n  |> filter(fn: (r) => r._value > 1 and r._value < 10000)\n  |> aggregateWindow(every: 5m, fn: mean, createEmpty: false)  // Aggregate by 5-minute intervals\n  |> yield(name: \"mean\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Frankfurt (de-fra-2) Renewable Energy Percentage",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            }
+          },
+          "displayName": "gCO2eq/kWh",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 10,
+        "x": 0,
+        "y": 38
+      },
+      "id": 39,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb"
+          },
+          "query": "from(bucket: \"de-fra-2\")\n  |> range(start: 2024-01-01T00:00:00Z, stop: 2024-12-31T23:59:59Z)\n  |> filter(fn: (r) => r._measurement == \"co2_intensity\")\n  |> filter(fn: (r) => r._field == \"Renewable Percentage\")\n  |> filter(fn: (r) => r.Country == \"Germany\")\n  |> filter(fn: (r) => r[\"Data Source\"] == \"entsoe.eu\")\n  |> filter(fn: (r) => r._value > 1 and r._value < 10000)\n  |> aggregateWindow(every: 5m, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Frankfurt (de-fra-2) Renewable Energy % distribution ",
+      "type": "histogram"
+    },
+    {
+      "datasource": {
+        "type": "influxdb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "_value"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Average Renewable Energy % (last 365 days)"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 10,
+        "y": 38
+      },
+      "id": 40,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.5.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb"
+          },
+          "query": "\nfrom(bucket: \"de-fra-2\")\n  |> range(start: 2024-01-01T00:00:00Z, stop: 2024-12-31T23:59:59Z)\n  |> filter(fn: (r) => r._measurement == \"co2_intensity\")\n  |> filter(fn: (r) => r._field == \"Renewable Percentage\")\n  |> filter(fn: (r) => r.Country == \"Germany\")\n  |> filter(fn: (r) => r[\"Data Source\"] == \"entsoe.eu\")\n  |> filter(fn: (r) => r._value > 1 and r._value < 10000)\n  |> group()  // Group all data together (remove any subgrouping)\n  |> stddev(column: \"_value\")  // Calculate the standard deviation for the entire dataset\n  |> map(fn: (r) => ({\n      r with three_sigma: r._value * 3.0  // Multiply standard deviation by 3 to get 3-sigma\n  }))\n  |> keep(columns: [\"three_sigma\"])  // Only keep the 3-sigma value\n  |> yield(name: \"three_sigma\")\n\nfrom(bucket: \"de-fra-2\")\n  |> range(start: 2024-01-01T00:00:00Z, stop: 2024-12-31T23:59:59Z)\n  |> filter(fn: (r) => r._measurement == \"co2_intensity\")\n  |> filter(fn: (r) => r._field == \"Renewable Percentage\")\n  |> filter(fn: (r) => r.Country == \"Germany\")\n  |> filter(fn: (r) => r[\"Data Source\"] == \"entsoe.eu\")\n  |> filter(fn: (r) => r._value > 1 and r._value < 10000)\n  |> aggregateWindow(every: 1d, fn: mean, createEmpty: false)  // Aggregate data by day\n  |> group()\n  |> mean(column: \"_value\")  // Calculate the mean CO2 intensity for the last 365 days\n  |> yield(name: \"365_day_average\")\n\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Frankfurt (de-fra-2)  Average and 3sigma CO2 Emissions (last 30 days)",
+      "type": "stat"
+    }
+  ],
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 40,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "2024-01-01T00:00:00.000Z",
+    "to": "2024-12-31T23:59:59.000Z"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Linode Region de-fra-2 CO2 Dashboard Overview (2024)",
+  "uid": "adw030i4syfpcc",
+  "version": 9,
+  "weekStart": ""
+}
