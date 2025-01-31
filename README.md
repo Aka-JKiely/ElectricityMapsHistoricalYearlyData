@@ -58,27 +58,23 @@ This guide assumes you have deployed the Grafana/InfluxDB stack for emissions tr
 2. Go to ElectricityMaps website and download the historical dataset for a zone/country, in this example we are going to use Germany for the grid information as it applies to Linode Frankfurt Data centre. Download the hourly dataset from here https://portal.electricitymaps.com/datasets/DE
 3. Copy across the dataset file downloaded from Electricity Maps to the Linode where the Grafana/InfluxDB stack is running in to the scripts directory /scripts/co2intensitymonitoring/DE_2024_hourly.csv
 4. Copy across the bash script in the respository here called emaps_historical_hourly_data_mod.sh which formats the csv file in to the correct format before inporting in to InfluxDB
-5. Run the modifcation script on the original historical hourly dataset like this: 
+5. Run the modifcation script on the original historical hourly dataset like this:
+   ./emaps_historical_hourly_data_mod.sh DE_2024_hourly.csv DE_2024_hourly_mod.csv
+7. Next setup influxDB config on the cli with this command, add your InfluxDB token in to the --token placeholder "INSERT_INFLUXDB_TOKEN_HERE"
+   influx config create --config-name default   --host-url http://localhost:8086   --org Akamai   --token INSERT_INFLUXDB_TOKEN_HERE   --active
+8. Next use the InfluxDB write command to import the modified csv file in to the existing bucket, in this example we are using de-fra-2 (Frankfurt) location
+   influx write --bucket de-fra-2 --file DE_2024_hourly_mod.csv
+9. Next go to the Grafana Dashboard and import the example dashboard here in this repo https://github.com/Aka-JKiely/ElectricityMapsHistoricalYearlyData/blob/main/CO2emissionshistoricaldata_DE_2024.json
+   Modify as required if a different zone/country is being used or if a different year is being imported. 
 
-
-### Example Flux Query
-
-```flux
-from(bucket: "**`eu-west`**")
-  |> range(start: -30d)  // Adjust time range as needed
-  |> filter(fn: (r) => r._measurement == "co2_intensity")
-  |> filter(fn: (r) => r._field == "value")
-  |> aggregateWindow(every: 5m, fn: mean, createEmpty: false)  // Aggregate by 5-minute intervals
-  |> yield(name: "mean")
-```
-
-
-EmissionsDashboardSample.png
-![Alt text](EmissionsDashboardSample.png)
+   You should see a dashboard like this 
+   CO2Emissions_DE_2024_Sample.png
+   ![Alt text](CO2Emissions_DE_2024_Sample.png)
 
 
 ## Some known limitations 
 
+No known limitations, tested as of Jan 31st 2025 with 2024 and 2023 datasets, emaps may change file formats. 
 
 
 
