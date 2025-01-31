@@ -54,7 +54,7 @@ This guide assumes you have deployed the Grafana/InfluxDB stack for emissions tr
 
 ## How to Deploy 
 
-1. If you haven't already deploy the Grafana/InfluxDB stack as described here: https://github.com/Aka-JKiely/linodeco2intensitymonitoring 
+1. This guide assumes you have already built the Grafana/InflxuDB instance documented here: https://github.com/Aka-JKiely/linodeco2intensitymonitoring 
 2. Go to ElectricityMaps website and download the historical dataset for a zone/country, in this example we are going to use Germany for the grid information as it applies to Linode Frankfurt Data centre. Download the hourly dataset from here https://portal.electricitymaps.com/datasets/DE
 3. Copy across the dataset file downloaded from Electricity Maps to the Linode where the Grafana/InfluxDB stack is running in to the scripts directory /scripts/co2intensitymonitoring/DE_2024_hourly.csv
 4. Copy across the bash script in the respository here called emaps_historical_hourly_data_mod.sh which formats the csv file in to the correct format before inporting in to InfluxDB
